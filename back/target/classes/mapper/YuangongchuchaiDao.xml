@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.huangbishe.dao.YuangongchuchaiDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.huangbishe.entity.YuangongchuchaiEntity" id="YuangongchuchaiMap">
+        <result property="yuangonggonghao" column="yuangonggonghao"/>
+        <result property="yuangongxingming" column="yuangongxingming"/>
+        <result property="bumen" column="bumen"/>
+        <result property="chuchaishijian" column="chuchaishijian"/>
+        <result property="chuchaitianshu" column="chuchaitianshu"/>
+        <result property="chuchaifangshi" column="chuchaifangshi"/>
+        <result property="chuchaiyuanyin" column="chuchaiyuanyin"/>
+        <result property="sfsh" column="sfsh"/>
+        <result property="shhf" column="shhf"/>
+    </resultMap>
+
+    <select id="selectListVO"
+            resultType="com.huangbishe.entity.vo.YuangongchuchaiVO" >
+        SELECT * FROM yuangongchuchai  yuangongchuchai
+        <where> 1=1 ${ew.sqlSegment}</where>
+    </select>
+
+    <select id="selectVO"
+            resultType="com.huangbishe.entity.vo.YuangongchuchaiVO" >
+        SELECT  yuangongchuchai.* FROM yuangongchuchai  yuangongchuchai
+        <where> 1=1 ${ew.sqlSegment}</where>
+    </select>
+
+    <select id="selectListView"
+            resultType="com.huangbishe.entity.view.YuangongchuchaiView" >
+
+        SELECT  yuangongchuchai.* FROM yuangongchuchai  yuangongchuchai
+        <where> 1=1 ${ew.sqlSegment}</where>
+    </select>
+
+    <select id="selectView"
+            resultType="com.huangbishe.entity.view.YuangongchuchaiView" >
+        SELECT * FROM yuangongchuchai  yuangongchuchai <where> 1=1 ${ew.sqlSegment}</where>
+    </select>
+
+    <select id="barCountOne" 	resultType="map">
+        SELECT
+        yuangongxingming AS name,
+        COUNT(*) AS value
+        FROM yuangongchuchai
+        <where>
+            <!-- 按年月过滤出差时间 -->
+            <if test="riqi != null and riqi != ''">
+                AND DATE_FORMAT(chuchaishijian, "%Y-%m") = #{riqi}
+            </if>
+            <!-- 按部门过滤 -->
+            <if test="bumen != null and bumen != ''">
+                AND bumen = #{bumen}
+            </if>
+            <!-- 仅统计审核通过的记录 -->
+            AND sfsh = '是'
+        </where>
+        GROUP BY yuangonggonghao <!-- 按工号分组确保唯一性 -->
+    </select>
+
+</mapper>
